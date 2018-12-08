@@ -10,34 +10,70 @@ use App\Entity\Dish;
 
 class DishController extends AbstractController
 {
+    
+    /**
+     * @Route("/dish/{id}", name="dish_read")
+     */
+    public function read($id, Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'dish' => [],
+        );
+        
+        if((int)$id<=0)
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Id can\'t be negative';
+            return $this->prepareJsonResponse($responseContent);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $dish = $em->getRepository(Dish::class)->find($id);
+        
+        if(is_null($dish))
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Dish by given ID doesn\'t exist.';
+            return $this->prepareJsonResponse($responseContent);
+        }
+        
+        $responseContent['dish'] = [
+            'id' => $dish->getId(),
+            'name' => $dish->getName(),
+        ];
+        
+        return $this->prepareJsonResponse($responseContent);
+    }
+    
     /**
      * @Route("/dish/list", name="dish_list")
      */
-    public function dishList(Request $request)
+    public function list(Request $request)
     {
+        $responseContent = array(
+            'error' => 0,
+            'dishes' => [],
+        );
         
+        $em = $this->getDoctrine()->getManager();
+        $dishes = $em->getRepository(Dish::class)->findAll();
         
-        $response = new Response();
-        $response->setContent(json_encode([
-            [
-                'id' => 1,
-                'name' => 'Salmon',
-            ],
-            [
-                'id' => 2,
-                'name' => 'Pizza',
-            ],
-            
-        ]));
-        $response->headers->set('Content-Type', 'application/json');
-        
-        return $response;
+        for($i=0, $max_i = count($dishes); $i<$max_i; $i++)
+        {
+            $responseContent['dishes'][] = [
+                'id' => $dishes[$i]->getId(),
+                'name' => $dishes[$i]->getName(),
+            ];
+        }
+                        
+        return $this->prepareJsonResponse($responseContent);
     }
     
     /**
      * @Route("/dish/create", name="dish_create")
      */
-    public function dishCreate(Request $request)
+    public function create(Request $request)
     {
         $responseContent = array(
             'error' => 0,
@@ -85,6 +121,8 @@ class DishController extends AbstractController
         
         return $this->prepareJsonResponse($responseContent);            
     }
+    
+    
     
     
     public function prepareJsonResponse($content)
