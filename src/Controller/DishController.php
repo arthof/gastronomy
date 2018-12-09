@@ -12,7 +12,7 @@ class DishController extends AbstractController
 {
     
     /**
-     * @Route("/dish/{id}", name="dish_read")
+     * @Route("/dish/{id}", name="dish_read", requirements={"id"="\d+"}, methods={"GET"})
      */
     public function read($id, Request $request)
     {
