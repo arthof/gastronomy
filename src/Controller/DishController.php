@@ -122,7 +122,69 @@ class DishController extends AbstractController
         return $this->prepareJsonResponse($responseContent);            
     }
     
-    
+    /**
+     * @Route("/dish/update/{id}", name="dish_update", requirements={"id"="\d+"}, methods={"PUT"})
+     */
+    public function update($id, Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'message' => '',
+        );
+        
+        if($request->getContentType()!='json')
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Content type must by JSON.';
+            return $this->prepareJsonResponse($responseContent);
+        }
+        
+        if((int)$id<=0)
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Id can\'t be negative';
+            return $this->prepareJsonResponse($responseContent);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $dish = $em->getRepository(Dish::class)->find($id);
+        
+        if(is_null($dish))
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Dish by given ID doesn\'t exist.';
+            return $this->prepareJsonResponse($responseContent);
+        }
+       
+        if($request->getContent()=='')
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Request can\'t be empty.';
+            return $this->prepareJsonResponse($responseContent);
+        }
+        
+        $data = json_decode($request->getContent());
+        
+        if(!property_exists($data, 'name'))
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Name field not found.';
+            return $this->prepareJsonResponse($responseContent);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $dish = $em->getRepository(Dish::class)->find($id);
+        
+        //update
+        $dish->setName($data->name);
+        
+        //save changes
+        $em->flush();
+        
+        $responseContent['message'] = 'Dish updated.';
+        
+        return $this->prepareJsonResponse($responseContent);
+    }
     
     
     public function prepareJsonResponse($content)
