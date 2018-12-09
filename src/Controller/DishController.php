@@ -47,7 +47,7 @@ class DishController extends AbstractController
     }
     
     /**
-     * @Route("/dish/list", name="dish_list")
+     * @Route("/dish/list", name="dish_list", methods={"GET"})
      */
     public function list(Request $request)
     {
@@ -71,7 +71,7 @@ class DishController extends AbstractController
     }
     
     /**
-     * @Route("/dish/create", name="dish_create")
+     * @Route("/dish/create", name="dish_create", methods={"POST"})
      */
     public function create(Request $request)
     {
@@ -112,7 +112,7 @@ class DishController extends AbstractController
         
         if($dish->getId())
         {
-            $responseContent['message'] = 'Dish created, it\'s ID: '. $dish->getId();
+            $responseContent['message'] = 'Dish created, its ID: '. $dish->getId();
         }
         else
         {
