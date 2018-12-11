@@ -35,6 +35,7 @@ class OrderDish
     public function setFromDish(Dish $dish)
     {
         $this->setName($dish->getName());
+        $this->setPrice($dish->getPrice());
     }
 
     public function getId(): ?int
