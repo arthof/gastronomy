@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OrderRepository")
+ * @ORM\Table(name="`order`")
  */
 class Order
 {
@@ -40,7 +41,11 @@ class Order
 
     public function __construct()
     {
+        $now= new \DateTime(date('Y-m-d H:i:s'));
+        $this->setOrderDate($now);
         $this->orderDishes = new ArrayCollection();
+        $this->setState('active');
+        $this->setName('Order');
     }
 
     public function getId(): ?int
