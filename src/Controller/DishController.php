@@ -166,18 +166,11 @@ class DishController extends AbstractController
         
         $data = json_decode($request->getContent());
         
-        if(!property_exists($data, 'name'))
-        {
-            $responseContent['error'] = 1;
-            $responseContent['message'] = 'Name field not found.';
-            return Utils::prepareJsonResponse($responseContent);
-        }
+        if(property_exists($data, 'name'))
+            $dish->setName($data->name);
         
-        $em = $this->getDoctrine()->getManager();
-        $dish = $em->getRepository(Dish::class)->find($id);
-        
-        //update
-        $dish->setName($data->name);
+        if(property_exists($data, 'price'))
+            $dish->setPrice($data->price);
         
         //save changes
         $em->flush();
