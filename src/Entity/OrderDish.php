@@ -60,4 +60,13 @@ class OrderDish
 
         return $this;
     }
+    
+    public function getData()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+        ];
+    }
+    
 }
