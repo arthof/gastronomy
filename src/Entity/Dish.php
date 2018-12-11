@@ -21,6 +21,11 @@ class Dish
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, options={"default": "0.00"})
+     */
+    private $price;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -34,6 +39,18 @@ class Dish
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function setPrice($price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

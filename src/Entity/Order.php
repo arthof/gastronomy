@@ -39,6 +39,11 @@ class Order
      */
     private $orderDishes;
 
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, options={"default": "0.00"})
+     */
+    private $price;
+
     public function __construct()
     {
         $now= new \DateTime(date('Y-m-d H:i:s'));
@@ -116,6 +121,18 @@ class Order
                 $orderDish->setAssociatedOrder(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function setPrice($price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

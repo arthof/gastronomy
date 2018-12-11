@@ -26,6 +26,11 @@ class OrderDish
      * @ORM\JoinColumn(nullable=false)
      */
     private $associatedOrder;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, options={"default": "0.00"})
+     */
+    private $price;
     
     public function setFromDish(Dish $dish)
     {
@@ -67,6 +72,18 @@ class OrderDish
             'id' => $this->getId(),
             'name' => $this->getName(),
         ];
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function setPrice($price): self
+    {
+        $this->price = $price;
+
+        return $this;
     }
     
 }
