@@ -117,6 +117,48 @@ class OrderController extends AbstractController
     }
     
     /**
+     * @Route("/order/{id}", name="order_delete", requirements={"id"="\d+"}, methods={"DELETE"})
+     */
+    public function delete($id, Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'message' => '',
+        );
+        
+        if((int)$id<=0)
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Id can\'t be negative';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $order = $em->getRepository(Order::class)->find($id);
+        
+        if(is_null($order))
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Order by given ID doesn\'t exist.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        $orderDishes = $order->getOrderDishes();
+        if($orderDishes)
+        {
+            foreach($orderDishes as $orderDish)
+                $em->remove($orderDish);
+        }
+        
+        $em->remove($order);
+        $em->flush();
+        
+        $responseContent['message'] = 'Order by ID: ' . $id . ' was delted';
+        
+        return Utils::prepareJsonResponse($responseContent);
+    }
+    
+    /**
      * @Route("/order/list", name="order_list", methods={"GET"})
      */
     public function list(Request $request)
