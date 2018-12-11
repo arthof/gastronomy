@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Order;
 use App\Entity\Dish;
 use App\Entity\OrderDish;
+use App\Utils;
 
 class OrderController extends AbstractController
 {
@@ -25,14 +26,14 @@ class OrderController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Content type must by JSON.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         if($request->getContent()=='')
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Request can\'t be empty.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $data = json_decode($request->getContent());
@@ -65,6 +66,6 @@ class OrderController extends AbstractController
             $responseContent['message'] = 'Dish couln\'t be created';
         }
         
-        return $this->prepareJsonResponse($responseContent);   
+        return Utils::prepareJsonResponse($responseContent);
     }
 }

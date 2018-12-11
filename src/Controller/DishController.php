@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Dish;
+use App\Utils;
 
 class DishController extends AbstractController
 {
@@ -25,7 +26,7 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Id can\'t be negative';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $em = $this->getDoctrine()->getManager();
@@ -35,7 +36,7 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Dish by given ID doesn\'t exist.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $responseContent['dish'] = [
@@ -43,7 +44,7 @@ class DishController extends AbstractController
             'name' => $dish->getName(),
         ];
         
-        return $this->prepareJsonResponse($responseContent);
+        return Utils::prepareJsonResponse($responseContent);
     }
     
     /**
@@ -67,7 +68,7 @@ class DishController extends AbstractController
             ];
         }
                         
-        return $this->prepareJsonResponse($responseContent);
+        return Utils::prepareJsonResponse($responseContent);
     }
     
     /**
@@ -84,14 +85,14 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Content type must by JSON.';
-            return $this->prepareJsonResponse($responseContent);            
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         if($request->getContent()=='')
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Request can\'t be empty.';
-            return $this->prepareJsonResponse($responseContent);    
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $data = json_decode($request->getContent());
@@ -100,7 +101,7 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Name field not found.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $dish = new Dish();
@@ -119,7 +120,7 @@ class DishController extends AbstractController
             $responseContent['message'] = 'Dish couln\'t be created';
         }
         
-        return $this->prepareJsonResponse($responseContent);            
+        return Utils::prepareJsonResponse($responseContent);
     }
     
     /**
@@ -136,14 +137,14 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Content type must by JSON.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         if((int)$id<=0)
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Id can\'t be negative';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $em = $this->getDoctrine()->getManager();
@@ -153,14 +154,14 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Dish by given ID doesn\'t exist.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
        
         if($request->getContent()=='')
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Request can\'t be empty.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $data = json_decode($request->getContent());
@@ -169,7 +170,7 @@ class DishController extends AbstractController
         {
             $responseContent['error'] = 1;
             $responseContent['message'] = 'Name field not found.';
-            return $this->prepareJsonResponse($responseContent);
+            return Utils::prepareJsonResponse($responseContent);
         }
         
         $em = $this->getDoctrine()->getManager();
@@ -183,18 +184,8 @@ class DishController extends AbstractController
         
         $responseContent['message'] = 'Dish updated.';
         
-        return $this->prepareJsonResponse($responseContent);
+        return Utils::prepareJsonResponse($responseContent);
     }
-    
-    
-    public function prepareJsonResponse($content)
-    {
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setContent(json_encode($content));
-        return $response;
-    }
-    
     
 }
 
