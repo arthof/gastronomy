@@ -136,4 +136,16 @@ class Order
 
         return $this;
     }
+    
+    public function calculatePrice()
+    {
+        $price = 0;
+        $dishes = $this->getOrderDishes();
+        for($i=0, $max_i=count($dishes); $i<$max_i; $i++)
+        {
+            $price += $dishes[$i]->getPrice();
+        }
+        $this->setPrice($price);
+    }
+    
 }

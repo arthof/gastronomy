@@ -51,10 +51,12 @@ class OrderController extends AbstractController
                 continue;
             $orderDish = new OrderDish();
             $orderDish->setFromDish($dish);
-            $orderDish->setAssociatedOrder($order);
             $em->persist($orderDish);
+            $order->addOrderDish($orderDish);
         }
-                
+        
+        $order->calculatePrice();
+        
         $em->flush();
         
         if($order->getId())
