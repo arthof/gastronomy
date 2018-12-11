@@ -148,4 +148,13 @@ class Order
         $this->setPrice($price);
     }
     
+    public function getData()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'price' => $this->getPrice(),
+        ];
+    }
+    
 }
