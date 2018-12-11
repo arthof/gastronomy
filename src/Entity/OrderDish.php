@@ -26,6 +26,11 @@ class OrderDish
      * @ORM\JoinColumn(nullable=false)
      */
     private $associatedOrder;
+    
+    public function setFromDish(Dish $dish)
+    {
+        $this->setName($dish->getName());
+    }
 
     public function getId(): ?int
     {
