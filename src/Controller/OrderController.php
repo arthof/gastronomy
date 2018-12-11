@@ -115,4 +115,25 @@ class OrderController extends AbstractController
         
         return Utils::prepareJsonResponse($responseContent);
     }
+    
+    /**
+     * @Route("/order/list", name="order_list", methods={"GET"})
+     */
+    public function list(Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'orders' => [],
+        );
+        
+        $em = $this->getDoctrine()->getManager();
+        $orders = $em->getRepository(Order::class)->findAll();
+        
+        for($i=0, $max_i = count($orders); $i<$max_i; $i++)
+        {
+            $responseContent['orders'][] = $orders[$i]->getData();
+        }
+        
+        return Utils::prepareJsonResponse($responseContent);
+    }
 }
