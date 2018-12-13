@@ -75,6 +75,78 @@ class OrderController extends AbstractController
     }
     
     /**
+     * @Route("/order/create-bulk", name="order_create_bulk", methods={"POST"})
+     */
+    public function createBulk(Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'message' => '',
+        );
+        
+        if($request->getContentType()!='json')
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Content type must by JSON.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        if($request->getContent()=='')
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Request can\'t be empty.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        $data = json_decode($request->getContent());
+        
+        $em = $this->getDoctrine()->getManager();
+        $dishRepo = $em->getRepository(Dish::class);
+        
+//         $order = new Order();
+//         $em->persist($order);
+        
+        $recordsCreated = 0;
+        if($data)
+        {
+            foreach($data as $key => $val)
+            {
+                $order = new Order();
+                $em->persist($order);
+                if((property_exists($val, 'dishes') && $val->dishes))
+                {
+                    foreach($val->dishes as $key2=>$singleDish)
+                    {
+                        $dish = $dishRepo->find($singleDish->id);
+                        if(is_null($dish))
+                            continue;
+                        $orderDish = new OrderDish();
+                        $orderDish->setFromDish($dish);
+                        $em->persist($orderDish);
+                        $order->addOrderDish($orderDish);
+                    }
+                }
+                $order->calculatePrice();
+                $recordsCreated++;
+            }
+        }
+
+        $em->flush();
+        
+        if($recordsCreated)
+        {
+            $responseContent['message'] = 'Created records: '. $recordsCreated;
+        }
+        else
+        {
+            $responseContent['message'] = 'Orders couldn\'t be created.';
+        }
+        
+        return Utils::prepareJsonResponse($responseContent);
+    }
+    
+    
+    /**
      * @Route("/order/{id}", name="order_read", requirements={"id"="\d+"}, methods={"GET"})
      */
     public function read($id, Request $request)
