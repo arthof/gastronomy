@@ -31,11 +31,17 @@ class OrderDish
      * @ORM\Column(type="decimal", precision=10, scale=2, options={"default": "0.00"})
      */
     private $price;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Dish", cascade={"persist", "remove"})
+     */
+    private $associatedDish;
     
     public function setFromDish(Dish $dish)
     {
         $this->setName($dish->getName());
         $this->setPrice($dish->getPrice());
+        $this->setAssociatedDish($dish);
     }
 
     public function getId(): ?int
@@ -83,6 +89,18 @@ class OrderDish
     public function setPrice($price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getAssociatedDish(): ?Dish
+    {
+        return $this->associatedDish;
+    }
+
+    public function setAssociatedDish(?Dish $associatedDish): self
+    {
+        $this->associatedDish = $associatedDish;
 
         return $this;
     }
