@@ -33,9 +33,10 @@ class OrderDish
     private $price;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Dish", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Dish")
      */
     private $associatedDish;
+
     
     public function setFromDish(Dish $dish)
     {
@@ -104,5 +105,6 @@ class OrderDish
 
         return $this;
     }
+
     
 }
