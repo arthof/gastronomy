@@ -50,7 +50,7 @@ class Order
         $this->setOrderDate($now);
         $this->orderDishes = new ArrayCollection();
         $this->setState('active');
-        $this->setName('Order #');
+        $this->setName('Order ' . $now->format('Y-m-d H:i:s'));
     }
 
     public function getId(): ?int
