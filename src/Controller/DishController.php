@@ -97,6 +97,8 @@ class DishController extends AbstractController
         
         $data = json_decode($request->getContent());
         
+        $em = $this->getDoctrine()->getManager();
+        
         if(!property_exists($data, 'name'))
         {
             $responseContent['error'] = 1;
@@ -104,12 +106,19 @@ class DishController extends AbstractController
             return Utils::prepareJsonResponse($responseContent);
         }
         
+        if(!property_exists($data, 'price'))
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Price field not found.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
         $dish = new Dish();
         $dish->setName($data->name);
+        $dish->setPrice($data->price);
         
-        $em = $this->getDoctrine()->getManager();
         $em->persist($dish);
-        $result = $em->flush();
+        $em->flush();
         
         if($dish->getId())
         {
