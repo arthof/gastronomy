@@ -124,6 +124,62 @@ class DishController extends AbstractController
     }
     
     /**
+     * @Route("/dish/create-bulk", name="dish_create_bulk", methods={"POST"})
+     */
+    public function createBulk(Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'message' => '',
+        );
+        
+        if($request->getContentType()!='json')
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Content type must by JSON.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        if($request->getContent()=='')
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Request can\'t be empty.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        $data = json_decode($request->getContent());
+        
+        $em = $this->getDoctrine()->getManager();
+        $recordsCreated = 0;
+        if($data)
+        {
+            foreach($data as $key => $val)
+            {
+                if(!(property_exists($val, 'name') && property_exists($val, 'price')))
+                    continue;
+                $dish = new Dish();
+                $dish->setName($val->name);
+                $dish->setPrice($val->price);
+                $em->persist($dish);
+                $recordsCreated++;
+            }
+        }
+        
+        $em->flush();
+        
+        if($recordsCreated)
+        {
+            $responseContent['message'] = 'Created records: '. $recordsCreated;
+        }
+        else
+        {
+            $responseContent['message'] = 'Couldn\'t create any records.';
+        }
+        
+        return Utils::prepareJsonResponse($responseContent);
+    }
+    
+    /**
      * @Route("/dish/update/{id}", name="dish_update", requirements={"id"="\d+"}, methods={"PUT"})
      */
     public function update($id, Request $request)
