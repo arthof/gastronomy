@@ -79,6 +79,7 @@ class OrderDish
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
+			'price' => $this->getPrice(),
         ];
     }
 

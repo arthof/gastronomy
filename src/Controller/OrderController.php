@@ -176,9 +176,10 @@ class OrderController extends AbstractController
         $responseContent['order'] = [
             'id' => $order->getId(),
             'name' => $order->getName(),
+			'price' => $order->getPrice(),
             'dish' => [],
         ];
-        
+		
         $orderDishes = $order->getOrderDishes();
         for($i=0, $max_i = count($orderDishes); $i<$max_i; $i++)
         {
@@ -226,6 +227,43 @@ class OrderController extends AbstractController
         $em->flush();
         
         $responseContent['message'] = 'Order by ID: ' . $id . ' was delted';
+        
+        return Utils::prepareJsonResponse($responseContent);
+    }
+    
+    
+    /**
+     * @Route("/order/recalculate/{id}", name="order_recalculate", requirements={"id"="\d+"}, methods={"GET"})
+     */
+    public function recalculate($id, Request $request)
+    {
+        $responseContent = array(
+            'error' => 0,
+            'message' => '',
+        );
+        
+        if((int)$id<=0)
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Id can\'t be negative';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $order = $em->getRepository(Order::class)->find($id);
+        
+        if(is_null($order))
+        {
+            $responseContent['error'] = 1;
+            $responseContent['message'] = 'Order by given ID doesn\'t exist.';
+            return Utils::prepareJsonResponse($responseContent);
+        }
+		
+		$order->refreshOrderDishes();
+        $order->calculatePrice();
+        $em->flush();
+        
+        $responseContent['message'] = 'Order by ID: ' . $id . ' was recalculated';
         
         return Utils::prepareJsonResponse($responseContent);
     }

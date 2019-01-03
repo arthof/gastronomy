@@ -136,6 +136,25 @@ class Order
 
         return $this;
     }
+	
+	public function refreshOrderDishes()
+	{
+		$orderDishes = $this->getOrderDishes();
+			
+        if($orderDishes)
+        {
+			
+			for($i=0, $max_i=count($orderDishes); $i<$max_i; $i++)
+			{
+				$associatedDish = $orderDishes[$i]->getAssociatedDish();
+				if(!is_null($associatedDish))
+				{
+					$orderDishes[$i]->setName($associatedDish->getName());
+					$orderDishes[$i]->setPrice($associatedDish->getPrice());
+				}
+			}
+        }
+	}
     
     public function calculatePrice()
     {
